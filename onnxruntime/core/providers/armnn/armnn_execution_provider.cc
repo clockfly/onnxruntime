@@ -74,8 +74,7 @@ ArmNNExecutionProvider::ArmNNExecutionProvider(const ArmNNExecutionProviderInfo&
   ORT_UNUSED_PARAMETER(info);
 
   auto default_allocator_factory = [](int) {
-    auto memory_info = onnxruntime::make_unique<OrtMemoryInfo>(ArmNN, OrtAllocatorType::OrtDeviceAllocator);
-    return onnxruntime::make_unique<CPUAllocator>(std::move(memory_info));
+    return onnxruntime::make_unique<CPUAllocator>(OrtMemoryInfo(ArmNN, OrtAllocatorType::OrtDeviceAllocator));
   };
 
   DeviceAllocatorRegistrationInfo default_memory_info{
@@ -86,9 +85,7 @@ ArmNNExecutionProvider::ArmNNExecutionProvider(const ArmNNExecutionProviderInfo&
   InsertAllocator(CreateAllocator(default_memory_info));
 
   auto cpu_allocator_factory = [](int) {
-    auto memory_info = onnxruntime::make_unique<OrtMemoryInfo>(
-        ArmNN_CPU, OrtAllocatorType::OrtDeviceAllocator, OrtDevice(), 0, OrtMemTypeCPUOutput);
-    return onnxruntime::make_unique<CPUAllocator>(std::move(memory_info));
+    return onnxruntime::make_unique<CPUAllocator>(OrtMemoryInfo(ArmNN_CPU, OrtAllocatorType::OrtDeviceAllocator, OrtDevice(), 0, OrtMemTypeCPUOutput));
   };
 
   DeviceAllocatorRegistrationInfo cpu_memory_info{
